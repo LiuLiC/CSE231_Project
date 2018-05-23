@@ -49,10 +49,10 @@ public:
 };
 
 namespace {
-  struct ReachingDefinitionAnalysis: public FunctionPass {
+  struct ReachingDefinitionAnalysisPass: public FunctionPass {
     static char ID;
 
-    ReachingDefinitionAnalysis() : FunctionPass(ID) {}
+    ReachingDefinitionAnalysisPass() : FunctionPass(ID) {}
     bool runOnFunction(Function &F) override {
       errs() << "ReachingDefinitionAnalysis.\n";
       return false;
@@ -60,5 +60,5 @@ namespace {
   };
 }
 
-char ReachingDefinitionAnalysis::ID = 0;
-static RegisterPass<ReachingDefinitionAnalysis> X("cse231-reaching", "ReachingDefinitionAnalysis", false, false);
+char ReachingDefinitionAnalysisPass::ID = 0;
+static RegisterPass<ReachingDefinitionAnalysisPass> X("cse231-reaching", "ReachingDefinitionAnalysis", false, false);
