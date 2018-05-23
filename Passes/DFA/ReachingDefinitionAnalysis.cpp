@@ -47,3 +47,18 @@ public:
   }
 
 };
+
+namespace {
+  struct ReachingDefinitionAnalysis: public FunctionPass {
+    static char ID;
+
+    ReachingDefinitionAnalysis() : FunctionPass(ID) {}
+    bool runOnFunction(Function &F) override {
+      errs() << "ReachingDefinitionAnalysis.\n";
+      return false;
+    }
+  };
+}
+
+char ReachingDefinitionAnalysis::ID = 0;
+static RegisterPass<ReachingDefinitionAnalysis> X("cse231-reaching", "ReachingDefinitionAnalysis", false, false);
