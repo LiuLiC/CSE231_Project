@@ -282,7 +282,7 @@ class DataFlowAnalysis {
       for(auto it = EdgeToInfo.begin(), end = EdgeToInfo.end(); it != end; it++){
         Edge edge = it->first;
 
-        if(edge->first == 0){
+        if(edge.first == 0){
           continue;
         }
 
@@ -316,7 +316,7 @@ class DataFlowAnalysis {
           Info *info = new Info();
           Edge newOutEdge = std::make_pair(node, outgoingEdges[i]);
 
-          Info::join(infos[i], EdgeToInfo[newOutEdge], info);
+          Info::join(Infos[i], EdgeToInfo[newOutEdge], info);
 
           if(!Info::equals(info, EdgeToInfo[newOutEdge])){
             EdgeToInfo[newOutEdge] = info;
