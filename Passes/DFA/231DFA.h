@@ -242,6 +242,17 @@ class DataFlowAnalysis {
 
     virtual ~DataFlowAnalysis() {}
 
+    std::map<Edge, Info *> getEdgeToInfo() {
+    	return EdgeToInfo;
+    }
+
+    std::map<Instruction *, unsigned> getInstrToIndex() {
+    	return InstrToIndex;
+    }
+
+    std::map<unsigned, Instruction *> getIndexToInstr() {
+    	return IndexToInstr;
+    }
     /*
      * Print out the analysis results.
      *
