@@ -22,6 +22,7 @@
 #include "llvm/Support/raw_ostream.h"
 #include <deque>
 #include <map>
+#include <set>
 #include <utility>
 #include <vector>
 
@@ -134,7 +135,7 @@ class DataFlowAnalysis {
 
 		/*
 		 * Utility function:
-		 *   Get incoming edges of the instruction identified by index.
+		 *   Get outcoming edges of the instruction identified by index.
 		 *   OutgoingEdges stores the indices of the destination instructions of the outgoing edges.
 		 */
 		void getOutgoingEdges(unsigned index, std::vector<unsigned> * OutgoingEdges) {
@@ -241,6 +242,17 @@ class DataFlowAnalysis {
 
     virtual ~DataFlowAnalysis() {}
 
+    std::map<Edge, Info *> getEdgeToInfo() {
+    	return EdgeToInfo;
+    }
+
+    std::map<Instruction *, unsigned> getInstrToIndex() {
+    	return InstrToIndex;
+    }
+
+    std::map<unsigned, Instruction *> getIndexToInstr() {
+    	return IndexToInstr;
+    }
     /*
      * Print out the analysis results.
      *
@@ -277,8 +289,52 @@ class DataFlowAnalysis {
     	assert(EntryInstr != nullptr && "Entry instruction is null.");
 
     	// (2) Initialize the work list
+      std::set<unsigned> edgeSet;
+      for(auto it = EdgeToInfo.begin(), end = EdgeToInfo.end(); it != end; it++){
+        Edge edge = it->first;
+
+        if(edge.first == 0){
+          continue;
+        }
+
+        if(edgeSet.count(edge.first) == 0){
+          worklist.push_back(edge.first);
+          edgeSet.insert(edge.first);
+        }
+
+        if(edgeSet.count(edge.second) == 0){
+          worklist.push_back(edge.second);
+          edgeSet.insert(edge.second);
+        }
+      }
 
     	// (3) Compute until the work list is empty
+      while(!worklist.empty()){
+        unsigned node = worklist.front();
+        worklist.pop_front();
+
+        Instruction* inst = IndexToInstr[node];
+        std::vector<unsigned> incomingEdges;
+        std::vector<unsigned> outgoingEdges;
+        std::vector<Info *> Infos;
+
+        getIncomingEdges(node, &incomingEdges);
+        getOutgoingEdges(node, &outgoingEdges);
+
+        flowfunction(inst, incomingEdges, outgoingEdges, Infos);
+
+        for(size_t i = 0; i < Infos.size(); i++){
+          Info *info = new Info();
+          Edge newOutEdge = std::make_pair(node, outgoingEdges[i]);
+
+          Info::join(Infos[i], EdgeToInfo[newOutEdge], info);
+
+          if(!Info::equals(info, EdgeToInfo[newOutEdge])){
+            EdgeToInfo[newOutEdge] = info;
+            worklist.push_back(newOutEdge.second);
+          }
+        }
+      }
     }
 };
 
