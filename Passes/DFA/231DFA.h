@@ -243,7 +243,7 @@ class DataFlowAnalysis {
 					if (isa<PHINode>(instr))
 						continue;
 					if (instr == (Instruction *)block->getTerminator()) {
-            if(instr->getOpcodeName == "ret") {
+            if(instr->getOpcode() == 1) {  // Opcode 1 - "ret"
               EntryInstr = instr;
               addEdge(nullptr, EntryInstr, &InitialState);
             }
