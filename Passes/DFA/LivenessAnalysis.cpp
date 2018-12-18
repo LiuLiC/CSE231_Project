@@ -146,9 +146,10 @@ public:
               operand.insert(instrToIndex[opInstr]);
           }
 
-          LivenessInfo::join(outInfo, new LivenessInfo(operand), out_k);
-          Infos.push_back(out_k);
         } 
+
+        LivenessInfo::join(outInfo, new LivenessInfo(operand), out_k);
+        Infos.push_back(out_k);
       }
     }
   }
